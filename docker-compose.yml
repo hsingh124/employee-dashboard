@@ -1,0 +1,13 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/php-apache/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./src:/var/www/src
+      - ./vendor:/var/www/vendor
+      - ./composer.json:/var/www/composer.json
+      - ./composer.lock:/var/www/composer.lock
