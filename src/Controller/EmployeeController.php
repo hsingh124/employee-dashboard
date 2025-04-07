@@ -29,14 +29,8 @@ class EmployeeController {
         
         foreach ($routes as $route => $method) {
             [$routeMethod, $routePattern] = explode(' ', $route);
-            
-            if (!method_exists($this, $method)) {
-                throw new \RuntimeException("Method {$method} does not exist in " . static::class);
-            }
 
-            if ($this->requestMethod === $routeMethod && $this->match($routePattern)) {
-                $response = $this->$method();
-                $this->sendResponse($response);
+            if ($this->tryHandleRoute($routeMethod, $routePattern, $method)) {
                 return;
             }
         }
@@ -69,6 +63,25 @@ class EmployeeController {
             'status' => 200,
             'body' => ['message' => 'Success']
         ];
+    }
+
+    private function tryHandleRoute(string $routeMethod, string $routePattern, string $handlerMethod): bool
+    {
+        if ($this->requestMethod === $routeMethod && $this->match($routePattern)) {
+            $this->ensureMethodExists($handlerMethod);
+            $response = $this->$handlerMethod();
+            $this->sendResponse($response);
+            return true;
+        }
+
+        return false;
+    }
+
+    private function ensureMethodExists(string $method): void
+    {
+        if (!method_exists($this, $method)) {
+            throw new \RuntimeException("Method {$method} does not exist in " . static::class);
+        }
     }
 
     private function match(string $pattern): bool
