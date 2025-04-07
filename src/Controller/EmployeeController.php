@@ -26,9 +26,14 @@ class EmployeeController {
             'GET /employees' => 'getAllEmployees',
             'PATCH /employees/{id}/email' => 'updateEmailEndpoint',
         ];
-
+        
         foreach ($routes as $route => $method) {
             [$routeMethod, $routePattern] = explode(' ', $route);
+            
+            if (!method_exists($this, $method)) {
+                throw new \RuntimeException("Method {$method} does not exist in " . static::class);
+            }
+
             if ($this->requestMethod === $routeMethod && $this->match($routePattern)) {
                 $response = $this->$method();
                 $this->sendResponse($response);

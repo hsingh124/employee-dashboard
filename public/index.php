@@ -26,7 +26,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'error' => 'Server error',
-        'message' => $e->getMessage(),
-        'trace' => $e->getTraceAsString(), // comment out in production
+        'message' => $e->getMessage()
     ]);
 }
