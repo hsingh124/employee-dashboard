@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS employee (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  company_name VARCHAR(100) NOT NULL,
+  employee_name VARCHAR(100) NOT NULL,
+  email_address VARCHAR(100) NOT NULL UNIQUE,
+  salary INT NOT NULL
+);

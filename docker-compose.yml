@@ -11,3 +11,28 @@ services:
       - ./vendor:/var/www/vendor
       - ./composer.json:/var/www/composer.json
       - ./composer.lock:/var/www/composer.lock
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: myapp
+      DB_USERNAME: user
+      DB_PASSWORD: secret
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employee_dashboard
+      MYSQL_USER: user
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  db_data:
