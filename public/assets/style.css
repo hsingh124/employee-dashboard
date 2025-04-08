@@ -67,3 +67,7 @@ button:hover {
 .status.error {
     color: red;
 }
+
+#salaryTable {
+    margin-top: 2rem;
+}

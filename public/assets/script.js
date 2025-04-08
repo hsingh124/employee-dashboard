@@ -4,15 +4,15 @@ const uploadStatus = document.getElementById('uploadStatus');
 const tableBody = document.querySelector('#employeeTable tbody');
 
 async function loadEmployees() {
-  const res = await fetch('/employees');
-  const data = await res.json();
+    const res = await fetch('/employees');
+    const data = await res.json();
 
-  tableBody.innerHTML = '';
+    tableBody.innerHTML = '';
 
-  data.forEach(emp => {
-    const row = document.createElement('tr');
+    data.forEach(emp => {
+        const row = document.createElement('tr');
 
-    row.innerHTML = `
+        row.innerHTML = `
       <td>${emp.id}</td>
       <td>${emp.company_name}</td>
       <td>${emp.employee_name}</td>
@@ -25,50 +25,68 @@ async function loadEmployees() {
       </td>
     `;
 
-    tableBody.appendChild(row);
-  });
+        tableBody.appendChild(row);
+    });
 }
 
 uploadForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  const formData = new FormData();
-  formData.append('csv', csvFile.files[0]);
+    const formData = new FormData();
+    formData.append('csv', csvFile.files[0]);
 
-  try {
-    const res = await fetch('/employees/import-from-csv', {
-      method: 'POST',
-      body: formData
-    });
+    try {
+        const res = await fetch('/employees/import-from-csv', {
+            method: 'POST',
+            body: formData
+        });
 
-    const result = await res.json();
-    uploadStatus.textContent = result.message || result.error;
-    uploadStatus.className = 'status ' + (res.ok ? 'success' : 'error');
+        const result = await res.json();
+        uploadStatus.textContent = result.message || result.error;
+        uploadStatus.className = 'status ' + (res.ok ? 'success' : 'error');
 
-    if (res.ok) {
-      csvFile.value = '';
-      loadEmployees();
+        if (res.ok) {
+            csvFile.value = '';
+            loadEmployees();
+        }
+    } catch (err) {
+        uploadStatus.textContent = 'Upload failed';
+        uploadStatus.className = 'status error';
     }
-  } catch (err) {
-    uploadStatus.textContent = 'Upload failed';
-    uploadStatus.className = 'status error';
-  }
 });
 
 async function updateEmail(id, button) {
-  const input = button.closest('tr').querySelector('input[type="text"]');
-  const newEmail = input.value;
+    const input = button.closest('tr').querySelector('input[type="text"]');
+    const newEmail = input.value;
 
-  const res = await fetch(`/employees/${id}/email`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      email_address: newEmail
-    })
-  });
+    const res = await fetch(`/employees/${id}/email`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email_address: newEmail
+        })
+    });
 
-  const result = await res.json();
-  alert(result.message || result.error);
+    const result = await res.json();
+    alert(result.message || result.error);
+}
+
+async function loadAverageSalaries() {
+    const res = await fetch('/companies/average-salaries');
+    const data = await res.json();
+
+    const salaryBody = document.querySelector('#salaryTable tbody');
+    salaryBody.innerHTML = '';
+
+    data.forEach(company => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${company.company_name}</td>
+        <td>$${Number(company.average_salary).toLocaleString()}</td>
+      `;
+        salaryBody.appendChild(row);
+    });
 }
 
 loadEmployees();
+loadAverageSalaries();

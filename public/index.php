@@ -1,5 +1,6 @@
 <?php
 
+use App\Controller\CompanyController;
 use App\Controller\EmployeeController;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -24,6 +25,12 @@ try {
 
     if (preg_match('#^/employees#', $uri)) {
         $controller = new EmployeeController($mysqli, $method, $uri);
+        $controller->dispatch();
+        exit;
+    }
+
+    if (preg_match('#^/companies#', $uri)) {
+        $controller = new CompanyController($mysqli, $method, $uri);
         $controller->dispatch();
         exit;
     }

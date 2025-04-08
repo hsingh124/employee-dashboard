@@ -5,79 +5,29 @@ namespace App\Controller;
 use App\Repository\EmployeeRepository;
 use mysqli;
 
-class EmployeeController {
-    private string $requestMethod;
-    private string $requestUri;
+class EmployeeController extends BaseController {
     private EmployeeRepository $repository;
 
     public function __construct(mysqli $db, string $requestMethod, string $requestUri)
     {
-        $this->requestMethod = $requestMethod;
-        $this->requestUri = rtrim($requestUri, '/');
+        parent::__construct($requestMethod, $requestUri);
         $this->repository = new EmployeeRepository($db);
     }
 
-    public function dispatch(): void 
+    public function dispatch(array $routes = []): void 
     {
-        $routes = [
-            'POST /employees/import-from-csv' => 'importFromCsv',
-            'GET /employees' => 'getAllEmployees',
-            'PATCH /employees/{id}/email' => 'updateEmail',
-        ];
-        
-        foreach ($routes as $route => $method) {
-            [$routeMethod, $routePattern] = explode(' ', $route);
-
-            if ($this->tryHandleRoute($routeMethod, $routePattern, $method)) {
-                return;
-            }
+        if (empty($routes)) {
+            $routes = [
+                'POST /employees/import-from-csv' => 'importFromCsv',
+                'GET /employees' => 'getAllEmployees',
+                'PATCH /employees/{id}/email' => 'updateEmail',
+            ];
         }
 
-        $this->sendResponse([
-            'status' => 404,
-            'body' => ['error' => 'Not Found']
-        ]);
+        parent::dispatch($routes);
     }
 
-    private function tryHandleRoute(string $routeMethod, string $routePattern, string $handlerMethod): bool
-    {
-        if ($this->requestMethod === $routeMethod && $this->match($routePattern)) {
-            $this->ensureMethodExists($handlerMethod);
-            $response = $this->$handlerMethod();
-            $this->sendResponse($response);
-            return true;
-        }
-
-        return false;
-    }
-
-    private function match(string $pattern): bool
-    {
-        $regex = preg_replace('#\{id\}#', '(\d+)', $pattern);
-        return preg_match("#^$regex$#", $this->requestUri);
-    }
-
-    private function ensureMethodExists(string $method): void
-    {
-        if (!method_exists($this, $method)) {
-            throw new \RuntimeException("Method {$method} does not exist in " . static::class);
-        }
-    }
-
-    private function sendResponse(array $response): void
-    {
-        $status = $response['status'] ?? 200;
-        $body = $response['body'] ?? null;
-
-        http_response_code($status);
-        header('Content-Type: application/json');
-
-        if ($body !== null) {
-            echo json_encode($body);
-        }
-    }
-
-    private function importFromCsv(): array
+    public function importFromCsv(): array
     {
         $csvPath = $_FILES['csv']['tmp_name'] ?? null;
 
@@ -118,7 +68,7 @@ class EmployeeController {
         ];
     }
 
-    private function getAllEmployees(): array
+    public function getAllEmployees(): array
     {
         $employees = $this->repository->findAll();
 
@@ -128,7 +78,7 @@ class EmployeeController {
         ];
     }
 
-    private function updateEmail(): array
+    public function updateEmail(): array
     {
         $input = json_decode(file_get_contents('php://input'), true);
         

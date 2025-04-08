@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <title>Employee Manager</title>
-  <link rel="stylesheet" href="/assets/style.css" />
+    <meta charset="UTF-8" />
+    <title>Employee Manager</title>
+    <link rel="stylesheet" href="/assets/style.css" />
 </head>
+
 <body>
-  <h1>Employee Manager</h1>
+    <h1>Employee Manager</h1>
 
-  <form id="uploadForm">
-    <label>Upload CSV:</label>
-    <input type="file" name="csv" id="csvFile" accept=".csv" required>
-    <button type="submit">Upload</button>
-    <div class="status" id="uploadStatus"></div>
-  </form>
+    <form id="uploadForm">
+        <label>Upload CSV:</label>
+        <input type="file" name="csv" id="csvFile" accept=".csv" required>
+        <button type="submit">Upload</button>
+        <div class="status" id="uploadStatus"></div>
+    </form>
 
-  <h2>Employee List</h2>
-  <table id="employeeTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Company</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Salary</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <h2>Employee List</h2>
+    <table id="employeeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Company</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Salary</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-  <script src="/assets/script.js"></script>
+    <h2>Average Salaries by Company</h2>
+    <table id="salaryTable">
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Average Salary</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="/assets/script.js"></script>
 </body>
+
 </html>
