@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Database\DatabaseInterface;
 
+/**
+ * Handles queries related to company-level data.
+ */
 class CompanyRepository {
     private DatabaseInterface $db;
 
@@ -12,6 +15,11 @@ class CompanyRepository {
         $this->db = $db;
     }
 
+    /**
+     * Retrieves the average salary per company from the employee table.
+     * 
+     * @return array An array of company names with their average salaries.
+     */
     public function getAverageSalaries(): array
     {
         $query = "

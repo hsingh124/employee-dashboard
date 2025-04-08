@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Database\DatabaseInterface;
 use App\Repository\CompanyRepository;
 
+/**
+ * CompanyController handles all company-related routes and actions.
+ */
 class CompanyController extends BaseController {
     private CompanyRepository $repository;
 
@@ -14,6 +17,13 @@ class CompanyController extends BaseController {
         $this->repository = new CompanyRepository($db);
     }
 
+    /**
+     * Dispatches company-related routes.
+     * 
+     * @param array $routes
+     * 
+     * @return void
+     */
     public function dispatch(array $routes = []): void 
     {
         if (empty($routes)) {
@@ -25,6 +35,11 @@ class CompanyController extends BaseController {
         parent::dispatch($routes);
     }
 
+    /**
+     * Handler for fetching average salaries per company.
+     * 
+     * @return array JSON response with company salary averages.
+     */
     protected function getAverageSalaries(): array
     {
         $salaries = $this->repository->getAverageSalaries();

@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Database\DatabaseInterface;
 use App\Repository\EmployeeRepository;
 
+/**
+ * EmployeeController handles all employee-related routes and actions.
+ */
 class EmployeeController extends BaseController {
     private EmployeeRepository $repository;
 
@@ -14,6 +17,13 @@ class EmployeeController extends BaseController {
         $this->repository = new EmployeeRepository($db);
     }
 
+    /**
+     * Dispatches employee-related routes.
+     * 
+     * @param array $routes
+     * 
+     * @return void
+     */
     public function dispatch(array $routes = []): void 
     {
         if (empty($routes)) {
@@ -27,6 +37,11 @@ class EmployeeController extends BaseController {
         parent::dispatch($routes);
     }
 
+    /**
+     * Imports employee data from a CSV file uploaded via multipart/form-data.
+     * 
+     * @return array JSON response indicating success or error.
+     */
     protected function importFromCsv(): array
     {
         $csvPath = $_FILES['csv']['tmp_name'] ?? null;
@@ -68,6 +83,11 @@ class EmployeeController extends BaseController {
         ];
     }
 
+    /**
+     * Retrieves and returns all employees from the database.
+     * 
+     * @return array JSON response with a list of employees.
+     */
     protected function getAllEmployees(): array
     {
         $employees = $this->repository->findAll();
@@ -78,6 +98,11 @@ class EmployeeController extends BaseController {
         ];
     }
 
+    /**
+     * Updates an employee's email address based on the ID in the URI and JSON body.
+     * 
+     * @return array JSON response indicating success or validation error.
+     */
     protected function updateEmail(): array
     {
         $input = json_decode(file_get_contents('php://input'), true);
@@ -97,6 +122,14 @@ class EmployeeController extends BaseController {
         ];
     }
 
+    /**
+     * Validates the request data for updating an email address.
+     * 
+     * @param array $input
+     * @param int|null $id
+     * 
+     * @return array|null
+     */
     protected function validateUpdateEmailRequest(array $input, ?int $id): ?array
     {
         if (empty($id)) {
@@ -116,6 +149,11 @@ class EmployeeController extends BaseController {
         return null;
     }
 
+    /**
+     * Extracts the employee ID from the request URI.
+     * 
+     * @return int|null The employee ID or null if not found.
+     */
     protected function extractEmployeeId(): ?int
     {
         if (preg_match('#^/employees/(\d+)#', $this->requestUri, $matches)) {

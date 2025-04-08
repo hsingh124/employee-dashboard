@@ -4,6 +4,9 @@ namespace App\Repository;
 
 use App\Database\DatabaseInterface;
 
+/**
+ * Handles queries related to employee-level data.
+ */
 class EmployeeRepository {
     private DatabaseInterface $db;
 
@@ -12,6 +15,13 @@ class EmployeeRepository {
         $this->db = $db;
     }
 
+    /**
+     * Inserts a new employee record into the database.
+     * 
+     * @param array $data The employee data (expects keys: company_name, employee_name, email_address, salary).
+     * 
+     * @return void
+     */
     public function insert(array $data): void
     {
         $stmt = $this->db->prepare(
@@ -30,6 +40,11 @@ class EmployeeRepository {
         $stmt->execute();
     }
 
+    /**
+     * Fetches all employees from the database.
+     * 
+     * @return array A list of employee records as associative arrays.
+     */
     public function findAll(): array
     {
         $result = $this->db->query("SELECT * FROM employee");
@@ -47,6 +62,14 @@ class EmployeeRepository {
         return $employees;
     }
 
+    /**
+     * Updates an employee's email address by their ID.
+     * 
+     * @param int $id The employee's ID.
+     * @param string $newEmail The new email address to set.
+     * 
+     * @return void
+     */
     public function updateEmail(int $id, string $newEmail): void
     {
         $stmt = $this->db->prepare(
