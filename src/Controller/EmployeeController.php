@@ -62,9 +62,9 @@ class EmployeeController extends BaseController {
             ];
         }
 
-        fgetcsv($handle);
+        fgetcsv($handle, escape:'\\');
 
-        while (($row = fgetcsv($handle)) !== false) {
+        while (($row = fgetcsv($handle, escape:'\\')) !== false) {
             [$company, $employeeName, $email, $salary] = $row;
 
             $this->repository->insert([

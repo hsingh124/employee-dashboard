@@ -102,9 +102,6 @@ abstract class BaseController
         $status = $response['status'] ?? 200;
         $body = $response['body'] ?? null;
 
-        http_response_code($status);
-        header('Content-Type: application/json');
-
         if ($body !== null) {
             echo json_encode($body);
         }
