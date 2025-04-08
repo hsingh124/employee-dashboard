@@ -6,14 +6,12 @@ use App\Repository\EmployeeRepository;
 use mysqli;
 
 class EmployeeController {
-    private mysqli $db;
     private string $requestMethod;
     private string $requestUri;
     private EmployeeRepository $repository;
 
     public function __construct(mysqli $db, string $requestMethod, string $requestUri)
     {
-        $this->db = $db;
         $this->requestMethod = $requestMethod;
         $this->requestUri = rtrim($requestUri, '/');
         $this->repository = new EmployeeRepository($db);
@@ -24,7 +22,7 @@ class EmployeeController {
         $routes = [
             'POST /employees/import-from-csv' => 'importFromCsv',
             'GET /employees' => 'getAllEmployees',
-            'PATCH /employees/{id}/email' => 'updateEmailEndpoint',
+            'PATCH /employees/{id}/email' => 'updateEmail',
         ];
         
         foreach ($routes as $route => $method) {
@@ -41,30 +39,6 @@ class EmployeeController {
         ]);
     }
 
-    private function importFromCsv(): array
-    {
-        return [
-            'status' => 200,
-            'body' => ['message' => 'Success']
-        ];
-    }
-
-    private function getAllEmployees(): array
-    {
-        return [
-            'status' => 200,
-            'body' => ['message' => 'Success']
-        ];
-    }
-
-    private function updateEmailEndpoint(): array
-    {
-        return [
-            'status' => 200,
-            'body' => ['message' => 'Success']
-        ];
-    }
-
     private function tryHandleRoute(string $routeMethod, string $routePattern, string $handlerMethod): bool
     {
         if ($this->requestMethod === $routeMethod && $this->match($routePattern)) {
@@ -77,17 +51,17 @@ class EmployeeController {
         return false;
     }
 
+    private function match(string $pattern): bool
+    {
+        $regex = preg_replace('#\{id\}#', '(\d+)', $pattern);
+        return preg_match("#^$regex$#", $this->requestUri);
+    }
+
     private function ensureMethodExists(string $method): void
     {
         if (!method_exists($this, $method)) {
             throw new \RuntimeException("Method {$method} does not exist in " . static::class);
         }
-    }
-
-    private function match(string $pattern): bool
-    {
-        $regex = preg_replace('#\{id\}#', '(\d+)', $pattern);
-        return preg_match("#^$regex$#", $this->requestUri);
     }
 
     private function sendResponse(array $response): void
@@ -101,5 +75,64 @@ class EmployeeController {
         if ($body !== null) {
             echo json_encode($body);
         }
+    }
+
+    private function importFromCsv(): array
+    {
+        $csvPath = $_FILES['csv']['tmp_name'] ?? null;
+
+        if (!$csvPath || !file_exists($csvPath)) {
+            return [
+                'status' => 400,
+                'body' => ['error' => 'CSV file is missing or invalid.']
+            ];
+        }
+
+        $handle = fopen($csvPath, 'r');
+
+        if (!$handle) {
+            return [
+                'status' => 500,
+                'body' => ['error' => 'Unable to open CSV file.']
+            ];
+        }
+
+        fgetcsv($handle);
+
+        while (($row = fgetcsv($handle)) !== false) {
+            [$company, $employeeName, $email, $salary] = $row;
+
+            $this->repository->insert([
+                'company_name' => trim($company),
+                'employee_name' => trim($employeeName),
+                'email_address' => trim($email),
+                'salary' => (int) $salary
+            ]);
+        }
+
+        fclose($handle);
+
+        return [
+            'status' => 200,
+            'body' => ['message' => 'CSV imported successfully']
+        ];
+    }
+
+    private function getAllEmployees(): array
+    {
+        $employees = $this->repository->findAll();
+
+        return [
+            'status' => 200,
+            'body' => $employees
+        ];
+    }
+
+    private function updateEmail(): array
+    {
+        return [
+            'status' => 200,
+            'body' => ['message' => 'Success']
+        ];
     }
 }
