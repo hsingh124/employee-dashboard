@@ -2,12 +2,12 @@
 
 namespace App\Repository;
 
-use mysqli;
+use App\Database\DatabaseInterface;
 
 class EmployeeRepository {
-    private mysqli $db;
+    private DatabaseInterface $db;
 
-    public function __construct(mysqli $db)
+    public function __construct(DatabaseInterface $db)
     {
         $this->db = $db;
     }
@@ -35,7 +35,7 @@ class EmployeeRepository {
         $result = $this->db->query("SELECT * FROM employee");
 
         if (!$result) {
-            throw new \RuntimeException("Database error: " . $this->db->error);
+            throw new \RuntimeException("Database error: " . $this->db->getError());
         }
 
         $employees = [];
@@ -54,7 +54,7 @@ class EmployeeRepository {
         );
 
         if (!$stmt) {
-            throw new \RuntimeException("Prepare failed: " . $this->db->error);
+            throw new \RuntimeException("Prepare failed: " . $this->db->getError());
         }
 
         $stmt->bind_param('si', $newEmail, $id);

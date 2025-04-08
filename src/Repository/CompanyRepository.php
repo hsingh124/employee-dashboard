@@ -2,12 +2,12 @@
 
 namespace App\Repository;
 
-use mysqli;
+use App\Database\DatabaseInterface;
 
 class CompanyRepository {
-    private mysqli $db;
+    private DatabaseInterface $db;
 
-    public function __construct(mysqli $db)
+    public function __construct(DatabaseInterface $db)
     {
         $this->db = $db;
     }
@@ -24,7 +24,7 @@ class CompanyRepository {
         $result = $this->db->query($query);
 
         if (!$result) {
-            throw new \RuntimeException("Query failed: " . $this->db->error);
+            throw new \RuntimeException("Query failed: " . $this->db->getError());
         }
 
         $averages = [];

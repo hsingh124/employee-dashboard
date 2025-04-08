@@ -2,13 +2,13 @@
 
 namespace App\Controller;
 
+use App\Database\DatabaseInterface;
 use App\Repository\EmployeeRepository;
-use mysqli;
 
 class EmployeeController extends BaseController {
     private EmployeeRepository $repository;
 
-    public function __construct(mysqli $db, string $requestMethod, string $requestUri)
+    public function __construct(DatabaseInterface $db, string $requestMethod, string $requestUri)
     {
         parent::__construct($requestMethod, $requestUri);
         $this->repository = new EmployeeRepository($db);

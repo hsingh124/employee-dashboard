@@ -2,6 +2,7 @@
 
 use App\Controller\CompanyController;
 use App\Controller\EmployeeController;
+use App\Database\MySQLDatabase;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -12,6 +13,7 @@ $user = getenv('DB_USERNAME');
 $pass = getenv('DB_PASSWORD');
 
 $mysqli = waitForDatabase($host, $user, $pass, $db, $port);
+$database = new MySQLDatabase($mysqli);
 
 $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -24,13 +26,13 @@ try {
     }
 
     if (preg_match('#^/employees#', $uri)) {
-        $controller = new EmployeeController($mysqli, $method, $uri);
+        $controller = new EmployeeController($database, $method, $uri);
         $controller->dispatch();
         exit;
     }
 
     if (preg_match('#^/companies#', $uri)) {
-        $controller = new CompanyController($mysqli, $method, $uri);
+        $controller = new CompanyController($database, $method, $uri);
         $controller->dispatch();
         exit;
     }
