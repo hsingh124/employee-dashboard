@@ -1,5 +1,8 @@
 # Employee Dashboard
 
+## Demo
+![](demo.gif)
+
 ## Tech Stack
 - PHP 8.2
 - MySQL 8
