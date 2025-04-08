@@ -4,8 +4,8 @@
 https://github.com/user-attachments/assets/9aabf9d1-e93c-4a18-9cf7-3f7ef30a0941
 
 ## Tech Stack
-- PHP 8.2
-- MySQL 8
+- PHP 8.4
+- MySQL
 - Apache (via Docker)
 - Composer (dependency management)
 - PHPUnit (unit testing)
