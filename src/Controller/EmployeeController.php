@@ -134,18 +134,9 @@ class EmployeeController {
         
         $id = $this->extractEmployeeId();
 
-        if (empty($id)) {
-            return [
-                'status' => 422,
-                'body' => ['error' => 'Employee ID is missing or invalid in the URL']
-            ]; 
-        }
-        
-        if (!isset($input['email_address'])) {
-            return [
-                'status' => 422,
-                'body' => ['error' => 'Missing email_address']
-            ];
+        $validationError = $this->validateUpdateEmailRequest($input, $id);
+        if ($validationError !== null) {
+            return $validationError;
         }
 
         $this->repository->updateEmail($id, $input['email_address']);
@@ -154,6 +145,25 @@ class EmployeeController {
             'status' => 200,
             'body' => ['message' => 'Email updated']
         ];
+    }
+
+    private function validateUpdateEmailRequest(array $input, ?int $id): ?array
+    {
+        if (empty($id)) {
+            return [
+                'status' => 422,
+                'body' => ['error' => 'Employee ID is missing or invalid in the URL']
+            ];
+        }
+
+        if (empty($input['email_address'])) {
+            return [
+                'status' => 422,
+                'body' => ['error' => 'Missing email_address']
+            ];
+        }
+
+        return null;
     }
 
     private function extractEmployeeId(): ?int
