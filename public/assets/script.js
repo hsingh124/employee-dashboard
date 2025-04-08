@@ -48,6 +48,7 @@ uploadForm.addEventListener('submit', async (e) => {
         if (res.ok) {
             csvFile.value = '';
             loadEmployees();
+            loadAverageSalaries();
         }
     } catch (err) {
         uploadStatus.textContent = 'Upload failed';
