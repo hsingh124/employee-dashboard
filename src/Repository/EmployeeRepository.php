@@ -46,4 +46,23 @@ class EmployeeRepository {
     
         return $employees;
     }
+
+    public function updateEmail(int $id, string $newEmail): void
+    {
+        $stmt = $this->db->prepare(
+            "UPDATE employee SET email_address = ? WHERE id = ?"
+        );
+
+        if (!$stmt) {
+            throw new \RuntimeException("Prepare failed: " . $this->db->error);
+        }
+
+        $stmt->bind_param('si', $newEmail, $id);
+
+        if (!$stmt->execute()) {
+            throw new \RuntimeException("Execute failed: " . $stmt->error);
+        }
+
+        $stmt->close();
+    }
 }

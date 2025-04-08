@@ -130,9 +130,37 @@ class EmployeeController {
 
     private function updateEmail(): array
     {
+        $input = json_decode(file_get_contents('php://input'), true);
+        
+        $id = $this->extractEmployeeId();
+
+        if (empty($id)) {
+            return [
+                'status' => 422,
+                'body' => ['error' => 'Employee ID is missing or invalid in the URL']
+            ]; 
+        }
+        
+        if (!isset($input['email_address'])) {
+            return [
+                'status' => 422,
+                'body' => ['error' => 'Missing email_address']
+            ];
+        }
+
+        $this->repository->updateEmail($id, $input['email_address']);
+
         return [
             'status' => 200,
-            'body' => ['message' => 'Success']
+            'body' => ['message' => 'Email updated']
         ];
+    }
+
+    private function extractEmployeeId(): ?int
+    {
+        if (preg_match('#^/employees/(\d+)#', $this->requestUri, $matches)) {
+            return (int)$matches[1];
+        }
+        return null;
     }
 }
