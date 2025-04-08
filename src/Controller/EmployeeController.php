@@ -27,7 +27,7 @@ class EmployeeController extends BaseController {
         parent::dispatch($routes);
     }
 
-    public function importFromCsv(): array
+    protected function importFromCsv(): array
     {
         $csvPath = $_FILES['csv']['tmp_name'] ?? null;
 
@@ -68,7 +68,7 @@ class EmployeeController extends BaseController {
         ];
     }
 
-    public function getAllEmployees(): array
+    protected function getAllEmployees(): array
     {
         $employees = $this->repository->findAll();
 
@@ -78,7 +78,7 @@ class EmployeeController extends BaseController {
         ];
     }
 
-    public function updateEmail(): array
+    protected function updateEmail(): array
     {
         $input = json_decode(file_get_contents('php://input'), true);
         
@@ -97,7 +97,7 @@ class EmployeeController extends BaseController {
         ];
     }
 
-    private function validateUpdateEmailRequest(array $input, ?int $id): ?array
+    protected function validateUpdateEmailRequest(array $input, ?int $id): ?array
     {
         if (empty($id)) {
             return [
@@ -116,7 +116,7 @@ class EmployeeController extends BaseController {
         return null;
     }
 
-    private function extractEmployeeId(): ?int
+    protected function extractEmployeeId(): ?int
     {
         if (preg_match('#^/employees/(\d+)#', $this->requestUri, $matches)) {
             return (int)$matches[1];

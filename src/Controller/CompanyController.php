@@ -25,7 +25,7 @@ class CompanyController extends BaseController {
         parent::dispatch($routes);
     }
 
-    public function getAverageSalaries(): array
+    protected function getAverageSalaries(): array
     {
         $salaries = $this->repository->getAverageSalaries();
 
