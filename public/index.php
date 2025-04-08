@@ -17,11 +17,19 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = rtrim($uri, '/');
 
 try {
+    if ($uri === '' || $uri === '/') {
+        readfile(__DIR__ . '/app.html');
+        exit;
+    }
+
     if (preg_match('#^/employees#', $uri)) {
         $controller = new EmployeeController($mysqli, $method, $uri);
         $controller->dispatch();
         exit;
     }
+
+    http_response_code(404);
+    readfile(__DIR__ . '/404.html');
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode([
