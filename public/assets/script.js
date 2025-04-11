@@ -3,6 +3,31 @@ const csvFile = document.getElementById('csvFile');
 const uploadStatus = document.getElementById('uploadStatus');
 const tableBody = document.querySelector('#employeeTable tbody');
 
+function createTextCell(text) {
+    const cell = document.createElement('td');
+    cell.textContent = text;
+    return cell;
+}
+
+function createInputCell(emp) {
+    const cell = document.createElement('td');
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = emp.email_address;
+    input.dataset.id = emp.id;
+    cell.appendChild(input);
+    return cell;
+}
+
+function createButtonCell(emp) {
+    const cell = document.createElement('td');
+    const btn = document.createElement('button');
+    btn.textContent = 'Update';
+    btn.onclick = () => updateEmail(emp.id, btn);
+    cell.appendChild(btn);
+    return cell;
+}
+
 async function loadEmployees() {
     try {
         const res = await fetch('/employees');
@@ -12,20 +37,12 @@ async function loadEmployees() {
 
         data.forEach(emp => {
             const row = document.createElement('tr');
-
-            row.innerHTML = `
-                <td>${emp.id}</td>
-                <td>${emp.company_name}</td>
-                <td>${emp.employee_name}</td>
-                <td>
-                    <input type="text" value="${emp.email_address}" data-id="${emp.id}" />
-                </td>
-                <td>${emp.salary}</td>
-                <td>
-                    <button onclick="updateEmail(${emp.id}, this)">Update</button>
-                </td>
-            `;
-
+            row.appendChild(createTextCell(emp.id));
+            row.appendChild(createTextCell(emp.company_name));
+            row.appendChild(createTextCell(emp.employee_name));
+            row.appendChild(createInputCell(emp));
+            row.appendChild(createTextCell(emp.salary));
+            row.appendChild(createButtonCell(emp));
             tableBody.appendChild(row);
         });
     } catch (err) {
@@ -86,10 +103,15 @@ async function loadAverageSalaries() {
 
         data.forEach(company => {
             const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${company.company_name}</td>
-                <td>$${Number(company.average_salary).toLocaleString()}</td>
-            `;
+
+            const nameCell = document.createElement('td');
+            nameCell.textContent = company.company_name;
+
+            const salaryCell = document.createElement('td');
+            salaryCell.textContent = `$${Number(company.average_salary).toLocaleString()}`;
+
+            row.appendChild(nameCell);
+            row.appendChild(salaryCell);
             salaryBody.appendChild(row);
         });
     } catch (err) {
